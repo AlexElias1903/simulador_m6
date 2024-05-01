@@ -1,8 +1,30 @@
 import argparse
 import heapq
-import random
 import yaml 
 
+a = 1664525
+c = 101390422
+M = 2**32
+seeds = [1]
+
+class Random:
+    def __init__(self):
+        self.current_index = 0
+        
+    def random(self):
+        if (self.current_index >= len(seeds)):
+            self.current_index = 0
+        x = seeds[self.current_index]
+        seeds[self.current_index] = (a * x + c) % M
+        value = seeds[self.current_index] / M
+        self.current_index += 1
+        return value
+    
+    def uniform(self, a, b):
+        return a + (b - a) * self.random()
+        
+
+random = Random()
 class Fila:
     def __init__(self, id, servidores, capacidade, intervalo_chegada, intervalo_servico, roteamento=None):
         self.id = id
@@ -91,47 +113,42 @@ def simular(filas, total_eventos,arrivals):
         probabilidades = fila.calcular_probabilidades(fila.ultimo_evento_tempo)
         print("\nDistribuição de probabilidades dos estados:")
         for estado, probabilidade in probabilidades.items():
+            if (probabilidade == 0):
+                continue
             print(f"Estado {estado}: {probabilidade:.2f}%")
         print("\nTempos acumulados para os estados:")
         for estado, tempo in enumerate(fila.tempos_acumulados):
+            if (tempo == 0):
+                continue
             print(f"Estado {estado}: {tempo:.2f} segundos")
         print(f"Tempo total de simulação: {fila.ultimo_evento_tempo:.2f} segundos")
 
 def carregar_configuracoes(filepath):
+    global seeds
     with open(filepath, 'r') as file:
         data = yaml.safe_load(file)
 
     filas = {}
     roteamentos = {k: {} for k in data['queues'].keys()}
 
+    if (data['seeds']):
+        seeds = data['seeds']
+
     for network in data['network']:
         roteamentos[network['source']][network['target']] = network['probability']
 
     for id, config in data['queues'].items():
-        filas[id] = Fila(id, config['servers'], config['capacity'], config.get('intervalo_chegada'), config['intervalo_servico'], roteamentos[id])
+        filas[id] = Fila(id, config['servers'], config['capacity'], [config.get('minArrival'), config.get('maxArrival')], [config.get('minService'), config.get('maxService')], roteamentos[id])
 
-    return filas, data['arrivals']
+    return filas, data['arrivals'], data['rndnumbersPerSeed']
 
-
-def analisar_argumentos():
-    analisador = argparse.ArgumentParser(description="Simulação de rede de filas")
-    analisador.add_argument("--total_eventos", type=int, default=100000, help="Total de eventos aleatórios para simular")
-    args = analisador.parse_args()
-    return args.total_eventos
 
 def main():
-    filepath = 'caixa copy 2.yml'  # Caminho para o arquivo YML
-    total_eventos = analisar_argumentos()
-    filas,arrivals = carregar_configuracoes(filepath)
+    filepath = 'config.yml' 
+    filas,arrivals,total_eventos  = carregar_configuracoes(filepath)
 
     simular(filas, total_eventos,arrivals)
 
-    # Configurar tempo inicial de chegada para cada fila
-    # escalonador = Escalonador()
-    # for id, tempo in arrivals.items():
-    #     escalonador.adicionar_evento(('CHEGADA', tempo, filas[id]))
-
-    # simular(filas, total_eventos)
 
 if __name__ == "__main__":
     main()

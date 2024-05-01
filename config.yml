@@ -1,22 +1,29 @@
+# !PARAMETERS
 arrivals: 
   Q1: 2.0
 
 queues:
   Q1: 
     servers: 1
-    capacity: 6
-    intervalo_chegada: [2.0, 4.0]
-    intervalo_servico: [1.0, 2.0]
+    capacity: 99999
+    minArrival: 2.0
+    maxArrival: 4.0
+    minService: 1.0
+    maxService: 2.0
   Q2: 
     servers: 2
     capacity: 5
-    intervalo_chegada: [4.0, 8.0]
-    intervalo_servico: [4.0, 8.0]
+    minService: 4.0
+    maxService: 8.0
+    minArrival: 4.0
+    maxArrival: 8.0
   Q3: 
     servers: 2
     capacity: 10
-    intervalo_chegada: [5.0, 15.0]
-    intervalo_servico: [5.0, 15.0]
+    minService: 5.0
+    maxService: 15.0
+    minArrival: 5.0
+    maxArrival: 15.0
 
 network: 
   - source: Q1
