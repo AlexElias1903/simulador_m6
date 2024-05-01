@@ -1,0 +1,38 @@
+rndnumbersPerSeed: 100000
+seeds:
+  - 1
+
+arrivals:
+  CAIXA: 3.0
+
+queues:
+  CAIXA:
+    servers: 4
+    capacity: 20
+    intervalo_chegada: [3.0, 7.0]
+    intervalo_servico: [2.0, 5.0]
+  CONSULTORIA:
+    servers: 2
+    capacity: 10
+    intervalo_servico: [15.0, 45.0]
+  ATENDIMENTO:
+    servers: 3
+    capacity: 15
+    intervalo_servico: [5.0, 20.0]
+
+network:
+  - source: CAIXA
+    target: CONSULTORIA
+    probability: 0.3
+  - source: CAIXA
+    target: ATENDIMENTO
+    probability: 0.1
+  - source: CONSULTORIA
+    target: CAIXA
+    probability: 0.4
+  - source: CONSULTORIA
+    target: ATENDIMENTO
+    probability: 0.2
+  - source: ATENDIMENTO
+    target: CAIXA
+    probability: 0.3

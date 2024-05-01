@@ -1,0 +1,43 @@
+!PARAMETERS
+rndnumbersPerSeed: 100000
+seeds: 
+- 1
+
+arrivals: 
+   CAIXA: 3.0
+
+queues: 
+   CAIXA: 
+      servers: 4
+      capacity: 20
+      minArrival: 3.0
+      maxArrival: 7.0
+      minService: 2.0
+      maxService: 5.0
+   CONSULTORIA: 
+      servers: 2
+      capacity: 10
+      minService: 15.0
+      maxService: 45.0
+   ATENDIMENTO: 
+      servers: 3
+      capacity: 15
+      minService: 5.0
+      maxService: 20.0
+
+network: 
+-  source: CAIXA
+   target: CONSULTORIA
+   probability: 0.3
+-  source: CAIXA
+   target: ATENDIMENTO
+   probability: 0.1
+-  source: CONSULTORIA
+   target: CAIXA
+   probability: 0.4
+-  source: CONSULTORIA
+   target: ATENDIMENTO
+   probability: 0.2
+-  source: ATENDIMENTO
+   target: CAIXA
+   probability: 0.3
